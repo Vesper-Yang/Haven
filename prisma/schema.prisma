@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// File: prisma/schema.prisma (Version 3.1 - Corrected)
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id // Clerk User ID
+  email      String     @unique
+  name       String?
+  categories Category[]
+  projects   Project[]
+  entries    Entry[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  name      String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects  Project[]
+  entries   Entry[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id         String   @id @default(cuid())
+  name       String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  entries    Entry[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Entry {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  mood       String?
+  images     Image[]
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  projectId  String?
+  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  entryId   String
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
