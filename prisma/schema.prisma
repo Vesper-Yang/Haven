@@ -16,7 +16,7 @@ datasource db {
 }
 
 model User {
-  id         String     @id // Clerk User ID
+  userId     String     @id // Clerk User ID
   email      String     @unique
   name       String?
   categories Category[]
@@ -27,49 +27,50 @@ model User {
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  name      String
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projects  Project[]
-  entries   Entry[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  categoryId     String    @id @default(cuid())
+  name           String
+  userId         String
+  user           User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  projects       Project[]
+  entries        Entry[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Project {
-  id         String   @id @default(cuid())
-  name       String
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  categoryId String
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  entries    Entry[]
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  projectId     String   @id @default(cuid())
+  name          String
+  userId        String
+  user          User     @relation(fields: [userId], references: [userId])
+  categoryId    String
+  category      Category @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
+  entries       Entry[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Entry {
-  id         String   @id @default(cuid())
-  content    String   @db.Text
+  entryId    String   @id @default(cuid())
+  content    String   @db.Text // 告诉PostgreSQL存储没有长度限制、理论上可以无限长的文本
+  timestamp  DateTime
   mood       String?
   images     Image[]
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
   categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category   Category? @relation(fields: [categoryId], references: [categoryId], onDelete: SetNull)
 
   projectId  String?
-  project    Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  project    Project?  @relation(fields: [projectId], references: [projectId], onDelete: SetNull)
 
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 }
 
 model Image {
-  id        String   @id @default(cuid())
+  imageId   String   @id @default(cuid())
   url       String
   entryId   String
-  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entry     Entry    @relation(fields: [entryId], references: [entryId], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
