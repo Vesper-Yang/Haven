@@ -16,61 +16,53 @@ datasource db {
 }
 
 model User {
-  userId     String     @id // Clerk User ID
-  email      String     @unique
-  name       String?
-  categories Category[]
-  projects   Project[]
+  id          String       @id @default(cuid())
+  clerkUserId String       @unique
+  email       String       @unique
+  name        String?
+  imageUrl    String?
+  categories  Collection[]
+  entries     Entry[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Collection {
+  id         String     @id @default(cuid())
+  name       String
+  userId     String
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   entries    Entry[]
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
-}
 
-model Category {
-  categoryId     String    @id @default(cuid())
-  name           String
-  userId         String
-  user           User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  projects       Project[]
-  entries        Entry[]
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-}
-
-model Project {
-  projectId     String   @id @default(cuid())
-  name          String
-  userId        String
-  user          User     @relation(fields: [userId], references: [userId])
-  categoryId    String
-  category      Category @relation(fields: [categoryId], references: [categoryId], onDelete: Cascade)
-  entries       Entry[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  @@unique([name, userId])
 }
 
 model Entry {
-  entryId    String   @id @default(cuid())
-  content    String   @db.Text // 告诉PostgreSQL存储没有长度限制、理论上可以无限长的文本
-  timestamp  DateTime
-  mood       String?
-  images     Image[]
-  userId     String
-  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  categoryId String?
-  category   Category? @relation(fields: [categoryId], references: [categoryId], onDelete: SetNull)
-
-  projectId  String?
-  project    Project?  @relation(fields: [projectId], references: [projectId], onDelete: SetNull)
-
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id            String       @id @default(cuid())
+  title         String?
+  content       String?      @db.Text
+  journalDate   DateTime
+  timeZone      String?
+  mood          String?
+  photos        Photo[]
+  userId        String
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  collectionId  String?
+  collection    Collection?  @relation(fields: [collectionId], references: [id], onDelete: SetNull)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
-model Image {
-  imageId   String   @id @default(cuid())
-  url       String
-  entryId   String
-  entry     Entry    @relation(fields: [entryId], references: [entryId], onDelete: Cascade)
-  createdAt DateTime @default(now())
+model Photo {
+  id           String     @id @default(cuid())
+  url          String
+  orderInEntry Int
+  entryId      String
+  entry        Entry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
 }
+
+
+// @db.Text 告诉PostgreSQL存储没有长度限制、理论上可以无限长的文本
