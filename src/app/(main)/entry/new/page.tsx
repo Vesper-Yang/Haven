@@ -1,0 +1,130 @@
+"use client";
+
+import React, { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { entrySchema, entrySchemaType } from "@/app/utils/schema";
+import { MOODS } from "@/app/utils/moods";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Textarea } from "@/components/ui/textarea";
+import { createEntry } from "@/actions/entry";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { BarLoader } from "react-spinners";
+
+const Entry = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<entrySchemaType>({
+    resolver: zodResolver(entrySchema),
+    defaultValues: {
+      title: "未命名",
+      content: "",
+      journalDate: new Date(),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      mood: MOODS.OK.id,
+      collectionId: null,
+    },
+  });
+
+  async function onSubmit(values: entrySchemaType) {
+    console.log(values);
+    setIsLoading(true);
+
+    try {
+      const result = await createEntry(values);
+
+      if (result) {
+        toast.success("创建日记成功");
+        router.push("/home");
+      }
+    } catch (error) {
+      toast.error(`创建日记失败, 发生未知错误: ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {isLoading && <BarLoader color="orange" width={"100%"} />}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Give your entry a title..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="mood"
+          render={({ field }) => (
+            <FormItem className="space-y-3">
+              <FormLabel>How are you feeling?</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-row gap-4"
+                >
+                  {Object.values(MOODS).map((mood) => {
+                    return (
+                      <FormItem className="flex items-center gap-2 border rounded-sm p-2 cursor-pointer">
+                        <FormControl>
+                          <RadioGroupItem key={mood.id} value={mood.id} />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          <span>{mood.emoji}</span>
+                          <span>{mood.label}</span>
+                        </FormLabel>
+                      </FormItem>
+                    );
+                  })}
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Textarea
+                  placeholder="Tel a little bit about yourself"
+                  className="resize-none min-h-40"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+};
+
+export default Entry;
