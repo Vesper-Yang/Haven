@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { entrySchema, entrySchemaType } from "@/app/utils/schema";
@@ -22,10 +22,15 @@ import { createEntry } from "@/actions/entry";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
+import useFetch from "@/hooks/use-fetch";
 
 const Entry = () => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    isLoading: isCreatingEntry,
+    execute: createEntryAction,
+    data: newEntry,
+  } = useFetch(createEntry);
 
   const form = useForm<entrySchemaType>({
     resolver: zodResolver(entrySchema),
@@ -41,27 +46,20 @@ const Entry = () => {
 
   async function onSubmit(values: entrySchemaType) {
     console.log("点击提交时,Entry的数据:", values);
-    setIsLoading(true);
-
-    try {
-      const result = await createEntry(values);
-      console.log(result);
-
-      if (result.success) {
-        toast.success("创建日记成功");
-        router.push("/home");
-      }
-    } catch (error) {
-      toast.error(`创建日记失败, 发生错误: ${error}`);
-    } finally {
-      setIsLoading(false);
-    }
+    createEntryAction(values);
   }
+
+  useEffect(() => {
+    if (newEntry && !isCreatingEntry) {
+      toast.success("Entry created successfully! 🎊");
+      router.push("/home");
+    }
+  }, [newEntry, isCreatingEntry]);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {isLoading && <BarLoader color="orange" width={"100%"} />}
+        {isCreatingEntry && <BarLoader color="orange" width={"100%"} />}
         <FormField
           control={form.control}
           name="title"
