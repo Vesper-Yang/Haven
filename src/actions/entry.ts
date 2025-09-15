@@ -4,7 +4,7 @@ import { MOODS } from "@/app/utils/moods";
 import { entrySchemaType } from "@/app/utils/schema";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { success } from "zod";
+import prisma from "@/lib/prisma";
 
 export async function createEntry(data: entrySchemaType) {
   try {
