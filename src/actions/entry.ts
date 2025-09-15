@@ -1,6 +1,6 @@
 "use server";
 
-import { MOODS } from "@/app/utils/moods";
+import { getMoodById, MOODS } from "@/app/utils/moods";
 import { entrySchemaType } from "@/app/utils/schema";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -36,11 +36,38 @@ export async function createEntry(data: entrySchemaType) {
     revalidatePath("/home");
     return { success: true, data: entry };
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    } else {
-      console.error("An unkown error occurred", error);
-    }
+    return { success: false, error: error };
+  }
+}
+
+export async function getEntries() {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const entries = await prisma.entry.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        journalDate: "desc",
+      },
+    });
+
+    const entriesWithMoodData = entries.map((entry) => ({
+      ...entry,
+      moodData: entry.mood ? getMoodById(entry.mood) : null,
+    }));
+
+    return { success: true, data: entriesWithMoodData };
+  } catch (error) {
     return { success: false, error: error };
   }
 }
