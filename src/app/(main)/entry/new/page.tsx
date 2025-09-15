@@ -45,10 +45,13 @@ const Entry = () => {
 
     try {
       const result = await createEntry(values);
+      console.log(result);
 
-      if (result) {
+      if (result.success) {
         toast.success("创建日记成功");
         router.push("/home");
+      } else {
+        toast.error(result.error instanceof Error);
       }
     } catch (error) {
       toast.error(`创建日记失败, 发生未知错误: ${error}`);

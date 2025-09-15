@@ -4,6 +4,7 @@ import { MOODS } from "@/app/utils/moods";
 import { entrySchemaType } from "@/app/utils/schema";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { success } from "zod";
 
 export async function createEntry(data: entrySchemaType) {
   try {
@@ -33,12 +34,13 @@ export async function createEntry(data: entrySchemaType) {
     });
 
     revalidatePath("/home");
-    return entry;
+    return { success: true, data: entry };
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
     } else {
       console.error("An unkown error occurred", error);
     }
+    return { success: false, error: error };
   }
 }
