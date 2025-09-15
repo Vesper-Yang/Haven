@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-type ServerAction<TData, Targs extends any[]> = (
+type ServerAction<TData, Targs extends unknown[]> = (
   ...args: Targs
 ) => Promise<TData>;
 
-const useFetch = <TData, Targs extends any[]>(
+const useFetch = <TData, Targs extends unknown[]>(
   serverAction: ServerAction<TData, Targs>
 ) => {
   const [data, setData] = useState<TData | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
   const execute = async (...args: Targs) => {
