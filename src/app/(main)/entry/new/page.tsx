@@ -50,11 +50,9 @@ const Entry = () => {
       if (result.success) {
         toast.success("创建日记成功");
         router.push("/home");
-      } else {
-        toast.error(result.error instanceof Error);
       }
     } catch (error) {
-      toast.error(`创建日记失败, 发生未知错误: ${error}`);
+      toast.error(`创建日记失败, 发生错误: ${error}`);
     } finally {
       setIsLoading(false);
     }
