@@ -40,7 +40,7 @@ const Entry = () => {
   });
 
   async function onSubmit(values: entrySchemaType) {
-    console.log(values);
+    console.log("点击提交时,Entry的数据:", values);
     setIsLoading(true);
 
     try {
@@ -88,9 +88,12 @@ const Entry = () => {
                 >
                   {Object.values(MOODS).map((mood) => {
                     return (
-                      <FormItem className="flex items-center gap-2 border rounded-sm p-2 cursor-pointer">
+                      <FormItem
+                        key={mood.id}
+                        className="flex items-center gap-2 border rounded-sm p-2 cursor-pointer"
+                      >
                         <FormControl>
-                          <RadioGroupItem key={mood.id} value={mood.id} />
+                          <RadioGroupItem value={mood.id} />
                         </FormControl>
                         <FormLabel className="font-normal">
                           <span>{mood.emoji}</span>
