@@ -19,10 +19,17 @@ const Home = async () => {
               key={entry.id}
               className="flex flex-col border border-amber-500 rounded-2xl p-2"
             >
-              <div>{entry.title}</div>
-              <div>{entry.content} </div>
-              <div>{entry.moodData?.emoji} </div>
-              <div>{entry.moodData?.label} </div>
+              <div>日记标题: {entry.title}</div>
+              <div>日记正文:{entry.content} </div>
+              <div>
+                心情:
+                <span>{entry.moodData?.emoji}</span>
+                <span>{entry.moodData?.label}</span>
+              </div>
+              <div>
+                日记本:
+                {entry.collection ? entry.collection.name : "unorganized"}
+              </div>
             </div>
           );
         })}

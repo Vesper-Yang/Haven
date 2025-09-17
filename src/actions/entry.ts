@@ -56,6 +56,14 @@ export async function getEntries() {
       where: {
         userId: user.id,
       },
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
       orderBy: {
         journalDate: "desc",
       },

@@ -1,0 +1,54 @@
+"use server";
+
+import { collectionSchemaType } from "@/app/utils/schema";
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+
+export async function createCollection(data: collectionSchemaType) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const collection = await prisma?.collection.create({
+      data: { name: data.name, userId: user.id },
+    });
+
+    return { success: true, data: collection };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}
+
+export async function getCollections() {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const collections = await prisma?.collection.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return { success: true, data: collections };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}

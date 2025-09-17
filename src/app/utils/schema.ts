@@ -12,3 +12,16 @@ export const entrySchema = z.object({
 });
 
 export type entrySchemaType = z.infer<typeof entrySchema>;
+
+export const collectionSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+});
+export type collectionSchemaType = z.infer<typeof collectionSchema>;
+
+export type Collection = {
+  name: string;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+};
