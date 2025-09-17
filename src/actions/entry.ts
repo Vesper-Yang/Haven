@@ -40,7 +40,7 @@ export async function createEntry(data: entrySchemaType) {
   }
 }
 
-export async function getEntries() {
+export async function getEntries(collectionId?: string) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -55,6 +55,11 @@ export async function getEntries() {
     const entries = await prisma.entry.findMany({
       where: {
         userId: user.id,
+        ...(collectionId === "unorganized" // 1. 如果查询未分类日记
+          ? { collectionId: null } // 查询条件就是 { userId: user.id, collectionId: null }
+          : collectionId // 2.查询指定分类的日记
+          ? { collectionId } // { userId: user.id, collectionId: "cuid_123" }
+          : {}), // 3.否则查询该用户的所有日记 { userId: user.id }
       },
       include: {
         collection: {

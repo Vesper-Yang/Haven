@@ -28,14 +28,7 @@ import { useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
 import useFetch from "@/hooks/use-fetch";
 import { createCollection, getCollections } from "@/actions/collection";
-import {
-  Check,
-  ChevronsUpDown,
-  Circle,
-  Plus,
-  Smile,
-  XCircle,
-} from "lucide-react";
+import { Check, ChevronsUpDown, Circle, Plus, Smile } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Command,
@@ -281,7 +274,9 @@ const Entry = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isCreatingEntry}>
+            Submit
+          </Button>
         </form>
       </Form>
 
