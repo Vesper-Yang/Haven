@@ -1,5 +1,6 @@
 "use server";
 
+import { getMoodById } from "@/app/utils/moods";
 import { collectionSchemaType } from "@/app/utils/schema";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
@@ -48,6 +49,49 @@ export async function getCollections() {
     });
 
     return { success: true, data: collections };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}
+
+export async function getCollectionById(collectionId: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const collection = await prisma?.collection.findUnique({
+      where: {
+        id: collectionId,
+        userId: user.id,
+      },
+      include: {
+        entries: {
+          orderBy: { journalDate: "desc" },
+        },
+      },
+    });
+
+    if (!collection) {
+      return { success: false, error: "Collection not found" };
+    }
+
+    const entriesWithMoodData = collection.entries.map((entry) => ({
+      ...entry,
+      moodData: entry.mood ? getMoodById(entry.mood) : null,
+    }));
+
+    const finalCollection = {
+      ...collection,
+      entries: entriesWithMoodData,
+    };
+    return { success: true, data: finalCollection };
   } catch (error) {
     return { success: false, error: error };
   }

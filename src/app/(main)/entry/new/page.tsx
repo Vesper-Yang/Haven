@@ -93,7 +93,7 @@ const Entry = () => {
       );
       router.push("/home");
     }
-  }, [CreatedEntry, isCreatingEntry]);
+  }, [CreatedEntry, isCreatingEntry, router]);
 
   useEffect(() => {
     fetchCollections();
@@ -108,7 +108,7 @@ const Entry = () => {
         `Collection ${createdCollection.data?.id} created successfully! 🎉`
       );
     }
-  }, [createdCollection, isCreatingCollection]);
+  }, [createdCollection, isCreatingCollection, fetchCollections, form]);
 
   const handleCreateCollection = (data: collectionSchemaType) => {
     createCollectionAction(data);
@@ -147,22 +147,20 @@ const Entry = () => {
                     defaultValue={field.value}
                     className="flex flex-row gap-4"
                   >
-                    {Object.values(MOODS).map((mood) => {
-                      return (
-                        <FormItem
-                          key={mood.id}
-                          className="flex items-center gap-2 border rounded-sm p-2 cursor-pointer"
-                        >
-                          <FormControl>
-                            <RadioGroupItem value={mood.id} />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            <span>{mood.emoji}</span>
-                            <span>{mood.label}</span>
-                          </FormLabel>
-                        </FormItem>
-                      );
-                    })}
+                    {Object.values(MOODS).map((mood) => (
+                      <FormItem
+                        key={mood.id}
+                        className="flex items-center gap-2 border rounded-sm p-2 cursor-pointer"
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={mood.id} />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          <span>{mood.emoji}</span>
+                          <span>{mood.label}</span>
+                        </FormLabel>
+                      </FormItem>
+                    ))}
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />

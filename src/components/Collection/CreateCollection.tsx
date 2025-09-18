@@ -51,7 +51,7 @@ const CreateCollection = ({
 
   useEffect(() => {
     if (open) form.reset();
-  }, [open]);
+  }, [open, form]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

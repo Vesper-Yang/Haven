@@ -27,26 +27,24 @@ const Home = async () => {
       </div>
       <div>This is Timeline.</div>
       <div className="flex flex-col gap-2">
-        {entries?.map((entry) => {
-          return (
-            <div
-              key={entry.id}
-              className="flex flex-col border border-amber-500 rounded-2xl p-2"
-            >
-              <div>日记标题: {entry.title}</div>
-              <div>日记正文:{entry.content} </div>
-              <div>
-                心情:
-                <span>{entry.moodData?.emoji}</span>
-                <span>{entry.moodData?.label}</span>
-              </div>
-              <div>
-                日记本:
-                {entry.collection ? entry.collection.name : "unorganized"}
-              </div>
+        {entries?.map((entry) => (
+          <div
+            key={entry.id}
+            className="flex flex-col border border-amber-500 rounded-2xl p-2"
+          >
+            <div>日记标题: {entry.title}</div>
+            <div>日记正文:{entry.content} </div>
+            <div>
+              心情:
+              <span>{entry.moodData?.emoji}</span>
+              <span>{entry.moodData?.label}</span>
             </div>
-          );
-        })}
+            <div>
+              日记本:
+              {entry.collection ? entry.collection.name : "unorganized"}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
