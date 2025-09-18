@@ -1,5 +1,6 @@
 import { getCollectionById } from "@/actions/collection";
 import { CollectionWithEntriesType } from "@/app/utils/schema";
+import DeleteCollecitonDialog from "@/components/Collection/DeleteColleciton";
 import UpdateCollectionDialog from "@/components/Collection/UpdateCollection";
 import React from "react";
 
@@ -20,6 +21,10 @@ const CollectionPage = async ({
           <div className="text-2xl font-bold">{collection.data?.name}</div>
           <UpdateCollectionDialog collection={collectionData} />
         </div>
+        <DeleteCollecitonDialog
+          collection={collectionData}
+          entriesCount={entries.length}
+        />
         <div>{collectionId}</div>
         <div className="flex flex-col gap-2">
           {entries && entries.length > 0

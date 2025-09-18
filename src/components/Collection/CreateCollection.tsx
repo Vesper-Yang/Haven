@@ -32,7 +32,7 @@ interface CreateCollectionProps {
   onSuccess: (newCollection: collectionSchemaType) => void;
 }
 
-const CreateCollection = ({
+const CreateCollectionDialog = ({
   open,
   setOpen,
   isLoading,
@@ -83,6 +83,7 @@ const CreateCollection = ({
                 <Button
                   type="button"
                   variant="outline"
+                  disabled={isLoading}
                   onClick={() => {
                     setOpen(false);
                   }}
@@ -90,7 +91,9 @@ const CreateCollection = ({
                   Cancel
                 </Button>
               </DialogClose>
-              <Button type="submit">Save</Button>
+              <Button type="submit" disabled={isLoading}>
+                Save
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -99,4 +102,4 @@ const CreateCollection = ({
   );
 };
 
-export default CreateCollection;
+export default CreateCollectionDialog;

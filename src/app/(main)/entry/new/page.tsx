@@ -43,7 +43,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import CreateCollection from "@/components/Collection/CreateCollection";
+import CreateCollectionDialog from "@/components/Collection/CreateCollection";
 
 const Entry = () => {
   const router = useRouter();
@@ -278,7 +278,7 @@ const Entry = () => {
         </form>
       </Form>
 
-      <CreateCollection
+      <CreateCollectionDialog
         open={createCollectionpen}
         setOpen={setCreateCollectionOpen}
         isLoading={isCreatingCollection}

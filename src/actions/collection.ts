@@ -110,6 +110,14 @@ export async function UpdateCollection(data: UpdateCollectionType) {
     });
     if (!user) throw new Error("User not found");
 
+    const existingCollection = await prisma.collection.findUnique({
+      where: {
+        id: data.id,
+        userId: user.id,
+      },
+    });
+    if (!existingCollection) throw new Error("Collection not found");
+
     const updatedCollection = await prisma.collection.update({
       where: {
         id: data.id,
@@ -125,6 +133,41 @@ export async function UpdateCollection(data: UpdateCollectionType) {
     revalidatePath(`/home`);
 
     return { success: true, data: updatedCollection };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}
+
+export async function DeleteCollection(collectionId: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const existingCollection = await prisma.collection.findUnique({
+      where: {
+        id: collectionId,
+        userId: user.id,
+      },
+    });
+    if (!existingCollection) throw new Error("Collection not found");
+
+    await prisma.collection.delete({
+      where: {
+        id: collectionId,
+      },
+    });
+
+    revalidatePath(`/home`);
+    revalidatePath(`/collection/${collectionId}`);
+
+    return { success: true };
   } catch (error) {
     return { success: false, error: error };
   }

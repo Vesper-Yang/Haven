@@ -64,7 +64,7 @@ const UpdateCollectionDialog = ({ collection }: UpdateCollectionProps) => {
       setOpen(false);
       toast.success(`Collection ${collection.id} updated successfully! 🎉`);
     }
-  }, [isUpdatingCollection, updatedCollection]);
+  }, [isUpdatingCollection, updatedCollection, collection]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
