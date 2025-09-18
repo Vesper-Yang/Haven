@@ -1,9 +1,10 @@
 "use server";
 
 import { getMoodById } from "@/app/utils/moods";
-import { collectionSchemaType } from "@/app/utils/schema";
+import { collectionSchemaType, UpdateCollectionType } from "@/app/utils/schema";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function createCollection(data: collectionSchemaType) {
   try {
@@ -92,6 +93,38 @@ export async function getCollectionById(collectionId: string) {
       entries: entriesWithMoodData,
     };
     return { success: true, data: finalCollection };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}
+
+export async function UpdateCollection(data: UpdateCollectionType) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const updatedCollection = await prisma.collection.update({
+      where: {
+        id: data.id,
+        userId: user.id,
+      },
+      data: {
+        id: data.id,
+        name: data.name,
+      },
+    });
+
+    revalidatePath(`/collection/${data.id}`);
+    revalidatePath(`/home`);
+
+    return { success: true, data: updatedCollection };
   } catch (error) {
     return { success: false, error: error };
   }

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Mood } from "./moods";
 
 export const entrySchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -18,10 +19,28 @@ export const collectionSchema = z.object({
 });
 export type collectionSchemaType = z.infer<typeof collectionSchema>;
 
-export type Collection = {
-  name: string;
+export type CollectionWithEntriesType = {
+  entries: {
+    moodData: Mood | null;
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    title: string | null;
+    content: string | null;
+    journalDate: Date;
+    timeZone: string | null;
+    mood: string | null;
+    collectionId: string | null;
+    userId: string;
+  }[];
   id: string;
+  name: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+};
+
+export type UpdateCollectionType = {
+  id: string;
+  name: string;
 };

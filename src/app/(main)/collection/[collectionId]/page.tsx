@@ -1,4 +1,6 @@
 import { getCollectionById } from "@/actions/collection";
+import { CollectionWithEntriesType } from "@/app/utils/schema";
+import UpdateCollectionDialog from "@/components/Collection/UpdateCollection";
 import React from "react";
 
 const CollectionPage = async ({
@@ -8,17 +10,20 @@ const CollectionPage = async ({
 }) => {
   const { collectionId } = await params;
   const collection = await getCollectionById(collectionId);
+  const collectionData = collection.data as CollectionWithEntriesType;
+  const entries = collectionData?.entries;
 
   return (
     <div>
       <div>
         <div className="flex flex-row gap-2">
           <div className="text-2xl font-bold">{collection.data?.name}</div>
+          <UpdateCollectionDialog collection={collectionData} />
         </div>
         <div>{collectionId}</div>
         <div className="flex flex-col gap-2">
-          {collection.data?.entries
-            ? collection.data.entries.map((entry) => (
+          {entries && entries.length > 0
+            ? entries.map((entry) => (
                 <div
                   key={entry.id}
                   className="flex flex-col border border-amber-500 rounded-2xl p-2"
@@ -32,7 +37,7 @@ const CollectionPage = async ({
                   </div>
                   <div>
                     日记本:
-                    {collection.data.name}
+                    {collectionData.name}
                   </div>
                 </div>
               ))
