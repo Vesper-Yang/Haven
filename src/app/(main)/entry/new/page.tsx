@@ -97,7 +97,7 @@ const Entry = () => {
 
   useEffect(() => {
     fetchCollections();
-  }, []);
+  }, [fetchCollections]);
 
   useEffect(() => {
     if (createdCollection && !isCreatingCollection) {
