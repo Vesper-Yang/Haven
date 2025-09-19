@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { format } from "date-fns";
 import Link from "next/link";
+import DeleteCollecitonDialog from "@/components/Entry/DeleteEntryDialog";
+import DeleteEntryDialog from "@/components/Entry/DeleteEntryDialog";
 
 const EntryPage = async ({ params }: { params: { entryId: string } }) => {
   const { entryId } = await params;
@@ -16,7 +18,10 @@ const EntryPage = async ({ params }: { params: { entryId: string } }) => {
   const mood = entryData.mood ? getMoodById(entryData.mood) : null;
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-2xl">{entryData.title}</div>
+      <div className="flex flex-row gap-2">
+        <div className="text-2xl">{entryData.title}</div>
+        <DeleteEntryDialog entry={entryData} />
+      </div>
       <div className="flex flex-row justify-between">
         {entryData.collection ? (
           <Link

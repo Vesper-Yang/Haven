@@ -119,3 +119,36 @@ export async function getEntryById(entryId: string) {
     return { success: false, error: error };
   }
 }
+
+export async function deleteEntry(entryId: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const existingEntry = await prisma.entry.findUnique({
+      where: {
+        id: entryId,
+        userId: user.id,
+      },
+    });
+    if (!existingEntry) throw new Error("Entry not found");
+
+    await prisma.entry.delete({
+      where: { id: entryId },
+    });
+
+    revalidatePath(`/home`);
+    revalidatePath(`/entry/${entryId}`);
+
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}

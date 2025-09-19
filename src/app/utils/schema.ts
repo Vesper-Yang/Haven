@@ -44,3 +44,20 @@ export type UpdateCollectionType = {
   id: string;
   name: string;
 };
+
+export type EntryWithCollectionType = {
+  title: string | null;
+  content: string | null;
+  journalDate: Date;
+  timeZone: string | null;
+  mood: string | null;
+  collectionId: string | null;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  collection: {
+    name: string;
+    id: string;
+  } | null;
+};
