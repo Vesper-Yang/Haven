@@ -84,3 +84,38 @@ export async function getEntries(collectionId?: string) {
     return { success: false, error: error };
   }
 }
+
+export async function getEntryById(entryId: string) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const entry = await prisma.entry.findUnique({
+      where: {
+        id: entryId,
+        userId: user.id,
+      },
+      include: {
+        collection: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!entry) throw new Error("Entry ont found");
+
+    return { success: true, data: entry };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}

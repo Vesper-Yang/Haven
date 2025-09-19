@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import useFetch from "@/hooks/use-fetch";
-import { UpdateCollection } from "@/actions/collection";
+import { updateCollection } from "@/actions/collection";
 import { toast } from "sonner";
 import { BarLoader } from "react-spinners";
 
@@ -43,7 +43,7 @@ const UpdateCollectionDialog = ({ collection }: UpdateCollectionProps) => {
     isLoading: isUpdatingCollection,
     execute: UpdateCollectionAction,
     data: updatedCollection,
-  } = useFetch(UpdateCollection);
+  } = useFetch(updateCollection);
 
   const form = useForm<collectionSchemaType>({
     resolver: zodResolver(collectionSchema),
@@ -64,7 +64,7 @@ const UpdateCollectionDialog = ({ collection }: UpdateCollectionProps) => {
       setOpen(false);
       toast.success(`Collection ${collection.id} updated successfully! 🎉`);
     }
-  }, [isUpdatingCollection, updatedCollection, collection]);
+  }, [isUpdatingCollection, updatedCollection, collection.id]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

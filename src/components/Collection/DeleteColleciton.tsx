@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "../ui/button";
 import useFetch from "@/hooks/use-fetch";
-import { DeleteCollection } from "@/actions/collection";
+import { deleteCollection } from "@/actions/collection";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -35,7 +35,7 @@ const DeleteCollecitonDialog = ({
     isLoading: isDeletingCollection,
     execute: DeleteCollecitonAction,
     data: deleteSuccess,
-  } = useFetch(DeleteCollection);
+  } = useFetch(deleteCollection);
 
   const handleDelete = () => {
     DeleteCollecitonAction(collection.id);

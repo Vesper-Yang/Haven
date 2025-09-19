@@ -2,6 +2,7 @@ import { getCollectionById } from "@/actions/collection";
 import { CollectionWithEntriesType } from "@/app/utils/schema";
 import DeleteCollecitonDialog from "@/components/Collection/DeleteColleciton";
 import UpdateCollectionDialog from "@/components/Collection/UpdateCollection";
+import { notFound } from "next/navigation";
 import React from "react";
 
 const CollectionPage = async ({
@@ -11,8 +12,11 @@ const CollectionPage = async ({
 }) => {
   const { collectionId } = await params;
   const collection = await getCollectionById(collectionId);
+  if (!collection || !collection.data) {
+    notFound();
+  }
   const collectionData = collection.data as CollectionWithEntriesType;
-  const entries = collectionData?.entries;
+  const entries = collectionData.entries;
 
   return (
     <div>

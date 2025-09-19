@@ -3,7 +3,7 @@ import Link from "next/link";
 import React, { Suspense } from "react";
 import { BarLoader } from "react-spinners";
 
-const WriteLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
+const EntryLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <div>
       <Link href="/home" className="mb-10">
@@ -16,4 +16,4 @@ const WriteLayout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   );
 };
 
-export default WriteLayout;
+export default EntryLayout;

@@ -98,7 +98,7 @@ export async function getCollectionById(collectionId: string) {
   }
 }
 
-export async function UpdateCollection(data: UpdateCollectionType) {
+export async function updateCollection(data: UpdateCollectionType) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
@@ -138,7 +138,7 @@ export async function UpdateCollection(data: UpdateCollectionType) {
   }
 }
 
-export async function DeleteCollection(collectionId: string) {
+export async function deleteCollection(collectionId: string) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
