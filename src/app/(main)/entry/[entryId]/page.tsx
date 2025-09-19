@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { format } from "date-fns";
 import Link from "next/link";
-import DeleteCollecitonDialog from "@/components/Entry/DeleteEntryDialog";
 import DeleteEntryDialog from "@/components/Entry/DeleteEntryDialog";
+import { Button } from "@/components/ui/button";
 
 const EntryPage = async ({ params }: { params: { entryId: string } }) => {
   const { entryId } = await params;
@@ -21,6 +21,9 @@ const EntryPage = async ({ params }: { params: { entryId: string } }) => {
       <div className="flex flex-row gap-2">
         <div className="text-2xl">{entryData.title}</div>
         <DeleteEntryDialog entry={entryData} />
+        <Link href={`/entry/${entryData.id}/edit`}>
+          <Button>Edit</Button>
+        </Link>
       </div>
       <div className="flex flex-row justify-between">
         {entryData.collection ? (

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { Mood } from "./moods";
 
 export const entrySchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(1, "Title is required"),
   content: z.string().optional(),
   journalDate: z.date({

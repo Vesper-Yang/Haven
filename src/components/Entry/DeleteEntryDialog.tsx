@@ -18,6 +18,7 @@ import useFetch from "@/hooks/use-fetch";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { deleteEntry } from "@/actions/entry";
+import { BarLoader } from "react-spinners";
 
 interface DeleteEntryDialogType {
   entry: EntryWithCollectionType;
@@ -53,6 +54,7 @@ const DeleteEntryDialog = ({ entry }: DeleteEntryDialogType) => {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          {isDeletingEntry && <BarLoader color="orange" width={"100%"} />}
           <AlertDialogDescription>
             您确定要删除这条日记吗？当您删除后无法恢复哦。
           </AlertDialogDescription>

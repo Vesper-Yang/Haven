@@ -9,7 +9,6 @@ import {
   entrySchemaType,
 } from "@/app/utils/schema";
 import { MOODS } from "@/app/utils/moods";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
-import { createEntry } from "@/actions/entry";
+import { updateEntry } from "@/actions/entry";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { BarLoader } from "react-spinners";
@@ -47,8 +46,17 @@ import CreateCollectionDialog from "@/components/Collection/CreateCollection";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
+import { getMoodById } from "@/app/utils/moods";
+import { EntryWithCollectionType } from "@/app/utils/schema";
 
-const Entry = () => {
+interface UpdateEntryFormType {
+  initialEntry: EntryWithCollectionType;
+}
+const UpdateEntryForm = ({ initialEntry }: UpdateEntryFormType) => {
+  const initialEntryMood = initialEntry.mood
+    ? getMoodById(initialEntry.mood)
+    : null;
+
   const router = useRouter();
   const [collectionOpen, setcollectionOpen] = useState(false);
   const [createCollectionpen, setCreateCollectionOpen] = useState(false);
@@ -61,10 +69,10 @@ const Entry = () => {
   const collectionList = collections?.data || [];
 
   const {
-    isLoading: isCreatingEntry,
-    execute: createEntryAction,
-    data: CreatedEntry,
-  } = useFetch(createEntry);
+    isLoading: isUpdatingEntry,
+    execute: updateEntryAction,
+    data: updatedEntry,
+  } = useFetch(updateEntry);
 
   const {
     isLoading: isCreatingCollection,
@@ -75,28 +83,33 @@ const Entry = () => {
   const form = useForm<entrySchemaType>({
     resolver: zodResolver(entrySchema),
     defaultValues: {
-      title: "未命名",
-      content: "",
-      journalDate: new Date(),
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      mood: MOODS.OK.id,
-      collectionId: null,
+      title: initialEntry.title || "未命名",
+      content: initialEntry.content || undefined,
+      journalDate: new Date(initialEntry.journalDate),
+      timeZone:
+        initialEntry.timeZone ||
+        Intl.DateTimeFormat().resolvedOptions().timeZone,
+      mood: initialEntryMood?.id || MOODS.OK.id,
+      collectionId: initialEntry.collectionId || null,
     },
   });
 
   async function onSubmit(values: entrySchemaType) {
     console.log("点击提交时,Entry的数据:", values);
-    createEntryAction(values);
+    updateEntryAction({
+      ...values,
+      id: initialEntry.id,
+    });
   }
 
   useEffect(() => {
-    if (CreatedEntry && !isCreatingEntry) {
+    if (updatedEntry && !isUpdatingEntry) {
       toast.success(
-        `Entry ${CreatedEntry.data?.title} created successfully! 🎊`
+        `Entry ${updatedEntry.data?.title} updated successfully! 🎊`
       );
       router.push("/home");
     }
-  }, [CreatedEntry, isCreatingEntry, router]);
+  }, [updatedEntry, isUpdatingEntry, router]);
 
   useEffect(() => {
     fetchCollections();
@@ -118,7 +131,7 @@ const Entry = () => {
   };
 
   const isLoading =
-    isCreatingEntry || isCreatingCollection || isFetchingCollections;
+    isUpdatingEntry || isCreatingCollection || isFetchingCollections;
 
   return (
     <div>
@@ -316,8 +329,8 @@ const Entry = () => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={isCreatingEntry}>
-            Submit
+          <Button type="submit" disabled={isUpdatingEntry}>
+            Update
           </Button>
         </form>
       </Form>
@@ -332,4 +345,4 @@ const Entry = () => {
   );
 };
 
-export default Entry;
+export default UpdateEntryForm;

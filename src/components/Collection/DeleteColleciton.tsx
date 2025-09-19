@@ -18,6 +18,7 @@ import useFetch from "@/hooks/use-fetch";
 import { deleteCollection } from "@/actions/collection";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { BarLoader } from "react-spinners";
 
 interface DeleteCollecitonProps {
   collection: CollectionWithEntriesType;
@@ -57,6 +58,7 @@ const DeleteCollecitonDialog = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+          {isDeletingCollection && <BarLoader color="orange" width={"100%"} />}
           <AlertDialogDescription>
             当前分类下有
             <span className="text-red-500">{entriesCount}</span>

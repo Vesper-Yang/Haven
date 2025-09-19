@@ -120,6 +120,52 @@ export async function getEntryById(entryId: string) {
   }
 }
 
+export async function updateEntry(data: entrySchemaType) {
+  try {
+    const { userId } = await auth();
+    if (!userId) throw new Error("Unauthorized");
+
+    const user = await prisma?.user.findUnique({
+      where: {
+        clerkUserId: userId,
+      },
+    });
+    if (!user) throw new Error("User not found");
+
+    const isExistingEntry = await prisma.entry.findUnique({
+      where: {
+        id: data.id,
+        userId: user.id,
+      },
+    });
+
+    if (!isExistingEntry) throw new Error("Entry not found");
+
+    const mood = MOODS[data.mood.toUpperCase()];
+    if (!mood) throw new Error("Invalid mood");
+
+    const updatedEntry = await prisma?.entry.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        title: data.title,
+        content: data.content,
+        journalDate: data.journalDate,
+        timeZone: data.timeZone,
+        mood: mood.id,
+        collectionId: data.collectionId,
+      },
+    });
+
+    revalidatePath("/home");
+    revalidatePath(`entry/${data.id}`);
+    return { success: true, data: updatedEntry };
+  } catch (error) {
+    return { success: false, error: error };
+  }
+}
+
 export async function deleteEntry(entryId: string) {
   try {
     const { userId } = await auth();
