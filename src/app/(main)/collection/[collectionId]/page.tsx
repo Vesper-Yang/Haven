@@ -2,6 +2,7 @@ import { getCollectionById } from "@/actions/collection";
 import { CollectionWithEntriesType } from "@/app/utils/schema";
 import DeleteCollecitonDialog from "@/components/Collection/DeleteColleciton";
 import UpdateCollectionDialog from "@/components/Collection/UpdateCollection";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 
@@ -33,8 +34,9 @@ const CollectionPage = async ({
         <div className="flex flex-col gap-2">
           {entries && entries.length > 0
             ? entries.map((entry) => (
-                <div
+                <Link
                   key={entry.id}
+                  href={`/entry/${entry.id}`}
                   className="flex flex-col border border-amber-500 rounded-2xl p-2"
                 >
                   <div>日记标题: {entry.title}</div>
@@ -48,7 +50,7 @@ const CollectionPage = async ({
                     日记本:
                     {collectionData.name}
                   </div>
-                </div>
+                </Link>
               ))
             : "此日记本里为空"}
         </div>
