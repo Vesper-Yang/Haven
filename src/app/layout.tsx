@@ -29,10 +29,11 @@ export default async function RootLayout({
   await checkUser();
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+      <html
+        lang="en"
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <body>
           <Header />
           <main>{children}</main>
           <Toaster richColors />
