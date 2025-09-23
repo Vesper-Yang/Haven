@@ -1,6 +1,7 @@
 import { getCollections } from "@/actions/collection";
 import { getEntries } from "@/actions/entry";
-import { Button } from "@/components/ui/button";
+import { RainbowButton } from "@/components/magicui/rainbow-button";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -11,7 +12,10 @@ const Home = async () => {
   return (
     <div>
       <Link href={"/entry/new"}>
-        <Button className="rounded-lg">Write new Journal</Button>
+        <RainbowButton variant={"outline"} className="text-[#0751cf]">
+          <Plus />
+          <span>Imprint</span>
+        </RainbowButton>
       </Link>
       <div>This is collection list</div>
       <div className="grid grid-cols-4 gap-1">
@@ -25,7 +29,7 @@ const Home = async () => {
           </Link>
         ))}
       </div>
-      <div>This is Timeline.</div>
+      <div className="text-2xl font-medium">The River of Time</div>
       <div className="flex flex-col gap-2">
         {entries?.map((entry) => (
           <Link
