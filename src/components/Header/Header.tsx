@@ -13,16 +13,20 @@ const Header = () => {
   const pathname = usePathname();
   return (
     <header className="container mx-auto">
-      <nav className="flex py-6 px-4 justify-between items-center">
-        <Link href={"/"}>
+      <nav className="flex py-4 px-4 justify-between items-center">
+        <Link
+          href={"/"}
+          className="flex flex-row gap-1 items-center justify-center hover:bg-[#CAE59D40] rounded-sm pr-2 pl-1 py-1 transition duration-300 ease-in-out"
+        >
           <Image
-            width={100}
-            height={100}
-            src="/next.svg"
+            width={128}
+            height={128}
+            src="/logo.png"
             alt="logo"
-            className="h-5 w-auto object-contain"
+            className="w-10 h-10"
             priority
           />
+          <p className="text-sm font-bold text-[#71ac11]">Haven</p>
         </Link>
         <div className="flex items-center gap-4">
           <SignedIn>
