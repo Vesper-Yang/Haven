@@ -1,12 +1,9 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardAction,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -37,7 +34,7 @@ const EntryCard = ({ entry }: { entry: EntryWithCollectionType }) => {
             {entry.collection ? entry.collection.name : "unorganized"}
           </p>
           <p className="text-xs text-gray-500">
-            {format(new Date(entry.journalDate), "yyyy/MM/dd HH:mm")}{" "}
+            {format(new Date(entry.journalDate), "PPP p")}
           </p>
         </CardFooter>
       </Card>

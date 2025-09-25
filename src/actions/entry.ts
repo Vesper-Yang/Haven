@@ -5,6 +5,16 @@ import { entrySchemaType } from "@/app/utils/schema";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import prisma from "@/lib/prisma";
+import {
+  endOfDay,
+  format,
+  getYear,
+  isToday,
+  isYesterday,
+  isWithinInterval,
+  startOfDay,
+  subDays,
+} from "date-fns";
 
 export async function createEntry(data: entrySchemaType) {
   try {
@@ -197,4 +207,64 @@ export async function deleteEntry(entryId: string) {
   } catch (error) {
     return { success: false, error: error };
   }
+}
+
+type GroupedEntriesType = {
+  groupName: string;
+  entries: Awaited<ReturnType<typeof getEntries>>["data"];
+};
+
+export async function getGroupedEntries() {
+  const result = await getEntries();
+  if (!result.success || !result.data)
+    throw new Error("Failed to fetch entries");
+
+  const entries = result.data;
+
+  const grouped = new Map<string, typeof entries>();
+
+  const today = startOfDay(new Date());
+  const sevenDaysAgo = subDays(today, 7);
+  const endOfThisDay = endOfDay(today);
+
+  for (const entry of entries) {
+    const journalDate = new Date(entry.journalDate);
+    let groupKey: string;
+
+    if (isToday(journalDate)) {
+      groupKey = "Today";
+    } else if (isYesterday(journalDate)) {
+      groupKey = "Yesterday";
+    } else if (
+      isWithinInterval(journalDate, {
+        start: sevenDaysAgo,
+        end: endOfThisDay,
+      })
+    ) {
+      groupKey = "Last 7 days";
+    } else {
+      const year = getYear(journalDate);
+      const currentYear = getYear(today);
+      if (year === currentYear) {
+        groupKey = format(journalDate, "MMMM yyyy");
+      } else {
+        groupKey = format(journalDate, "yyyy");
+      }
+    }
+
+    if (!grouped.has(groupKey)) {
+      grouped.set(groupKey, []);
+    }
+
+    grouped.get(groupKey)?.push(entry);
+  }
+
+  const groupedArray: GroupedEntriesType[] = Array.from(grouped.entries()).map(
+    ([groupName, entries]) => ({
+      groupName,
+      entries,
+    })
+  );
+
+  return { success: true, data: groupedArray };
 }
