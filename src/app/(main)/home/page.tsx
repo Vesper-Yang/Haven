@@ -1,6 +1,8 @@
 import { getCollections } from "@/actions/collection";
 import { getEntries } from "@/actions/entry";
+import EntryCard from "@/components/Entry/EntryCard";
 import { RainbowButton } from "@/components/magicui/rainbow-button";
+import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
@@ -10,46 +12,41 @@ const Home = async () => {
   const entries = (await getEntries()).data;
 
   return (
-    <div>
-      <Link href={"/entry/new"}>
-        <RainbowButton variant={"outline"} className="text-[#0751cf]">
+    <div className="px-4">
+      <Link href={"/entry/new"} className="flex justify-center mb-2">
+        <RainbowButton variant={"outline"} className="text-brand">
           <Plus />
           <span>Imprint</span>
         </RainbowButton>
       </Link>
-      <div>This is collection list</div>
-      <div className="grid grid-cols-4 gap-1">
-        {collections?.map((collection) => (
-          <Link
-            key={collection.id}
-            href={`/collection/${collection.id}`}
-            className="border border-orange-300 rounded-sm p-2 w-full"
-          >
-            {collection.name}
-          </Link>
-        ))}
+      <div className="flex flex-col items-center justify-center">
+        <div className="text-2xl font-medium my-4">Collection list</div>
+        <div className="flex flex-wrap justify-center gap-2">
+          {collections?.map((collection) => (
+            <Link key={collection.id} href={`/collection/${collection.id}`}>
+              <Button
+                variant={"outline"}
+                className="hover:border-brand border hover:bg-brand/10"
+              >
+                {collection.name}
+              </Button>
+            </Link>
+          ))}
+        </div>
       </div>
-      <div className="text-2xl font-medium">The River of Time</div>
-      <div className="flex flex-col gap-2">
-        {entries?.map((entry) => (
-          <Link
-            key={entry.id}
-            href={`/entry/${entry.id}`}
-            className="flex flex-col border border-amber-500 rounded-2xl p-2"
-          >
-            <div>日记标题: {entry.title}</div>
-            <div>日记正文:{entry.content} </div>
-            <div>
-              心情:
-              <span>{entry.moodData?.emoji}</span>
-              <span>{entry.moodData?.label}</span>
-            </div>
-            <div>
-              日记本:
-              {entry.collection ? entry.collection.name : "unorganized"}
-            </div>
-          </Link>
-        ))}
+      <div className="flex flex-col items-center">
+        <div className="text-2xl font-medium my-4">The River of Time</div>
+        <div className="flex flex-col gap-2">
+          {entries?.map((entry) => (
+            <Link
+              key={entry.id}
+              href={`/entry/${entry.id}`}
+              className="max-w-lg"
+            >
+              <EntryCard entry={entry} />
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

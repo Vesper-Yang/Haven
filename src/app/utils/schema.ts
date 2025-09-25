@@ -52,6 +52,7 @@ export type EntryWithCollectionType = {
   journalDate: Date;
   timeZone: string | null;
   mood: string | null;
+  moodData?: Mood | null;
   collectionId: string | null;
   id: string;
   createdAt: Date;
