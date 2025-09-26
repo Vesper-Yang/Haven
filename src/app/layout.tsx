@@ -5,6 +5,8 @@ import "./globals.css";
 import Header from "@/components/Header/Header";
 import { checkUser } from "@/lib/checkUser";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import { shadcn } from "@clerk/themes";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,16 +30,27 @@ export default async function RootLayout({
 }>) {
   await checkUser();
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: shadcn,
+      }}
+    >
       <html
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <body>
-          <Header />
-          <main>{children}</main>
-          <Toaster richColors />
-        </body>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <body>
+            <Header />
+            <main>{children}</main>
+            <Toaster richColors />
+          </body>
+        </ThemeProvider>
       </html>
     </ClerkProvider>
   );
